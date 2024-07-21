@@ -1,10 +1,8 @@
-%% Master script for the AOC study
+%% Master script for the FCD study
 
 % - Resting EEG
 % - Sternberg training (10 trials)
 % - Sternberg actual task (6 blocks x 50 trials)
-% - N-back training (10 trials)
-% - N-back task (6 blocks x 100 trials)
 
 %% General settings, screens and paths
 
@@ -23,7 +21,7 @@ mkdir(DATA_PATH) % Make data dir, if doesn't exist yet
 addpath(FUNS_PATH) % Add path to folder with functions
 screenSettings % Manage screens
 
-%% Collect ID and Age  
+%% Collect ID and Age
 dialogID;
 
 %% Protect Matlab code from participant keyboard input
@@ -34,187 +32,40 @@ if ~isfile([DATA_PATH, '/', num2str(subjectID), '/', num2str(subjectID), '_Resti
     Resting_EEG;
 end
 
-%% Randomize order of Sternberg Task and NBack Task
-% Use subject ID for assignment of pseudorandom task Order (Sternberg & N-back)
-if mod(subjectID, 2) == 0
-    taskOrder = 'NBackSternberg';
+%% Execute Sternberg Task
+disp(['Subject ' num2str(subjectID) ': RUNNING STERNBERG TASK...']);
+
+% Training phase
+TASK = 'FCD_Sternberg';
+BLOCK = 0;
+TRAINING = 1;
+trainingFile = [num2str(subjectID), '_', TASK, '_block0_training.mat'];
+if isfile([DATA_PATH, '/', num2str(subjectID), '/', trainingFile])
+    percentTotalCorrect = 60;
 else
-    taskOrder = 'SternbergNBack';
+    percentTotalCorrect = 0;
 end
 
-% Shuffle n-back conditions
-rng(123);
-nback_condition = repmat(1:3, 1, 2);
-nback_condition = nback_condition(randperm(length(nback_condition)));
-while nback_condition(1) == 3 % Ensure that the first block is not a 3-back
-    nback_condition = nback_condition(randperm(length(nback_condition)));
+while percentTotalCorrect < 59
+    disp([TASK, ' Training TASK...']);
+    eval(TASK); % Run the task
+    BLOCK = BLOCK + 1;
 end
 
-%% Execute STERNBERG - NBACK %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if strcmp(taskOrder, 'SternbergNBack')
-    disp(['Subject ' num2str(subjectID) ': Running Sternberg followed by N-Back...']);
-    
-    %% Execute Sternberg Task
-    % Training phase
-    TASK = 'AOC_Sternberg';
-    BLOCK = 0;
-    TRAINING = 1;
-    trainingFile = [num2str(subjectID), '_', TASK, '_block0_training.mat'];
-    if isfile([DATA_PATH, '/', num2str(subjectID), '/', trainingFile])
-        percentTotalCorrect = 60;
-    else
-        percentTotalCorrect = 0;
+% Actual task
+TRAINING = 0;
+blockCount = 6;
+start = 1;
+for i = blockCount:-1:1
+    if isfile([DATA_PATH, '/', num2str(subjectID), '/', [num2str(subjectID), '_', TASK, '_block', num2str(i), '_task.mat']])
+        start = i + 1;
+        break;
     end
-    
-    while percentTotalCorrect < 59
-        disp([TASK, ' Training TASK...']);
-        eval(TASK); % Run the task
-        BLOCK = BLOCK + 1;
-    end
-    
-    % Actual task
-    TRAINING = 0;
-    blockCount = 6;
-    start = 1;
-    for i = blockCount:-1:1
-        if isfile([DATA_PATH, '/', num2str(subjectID), '/', [num2str(subjectID), '_', TASK, '_block', num2str(i), '_task.mat']])
-            start = i + 1;
-            break;
-        end
-    end
-    
-    for BLOCK = start:blockCount
-        disp([TASK, ' STARTING...']);
-        eval(TASK); % Run the task
-    end
-    
-    %% Mandatory Break of at least 5 seconds
-    disp('Waiting 5 seconds between tasks...');
-    WaitSecs(5);
-    
-    %% Execute N-back Task
-    % Training phase
-    TASK = 'AOC_NBack';
-    BLOCK = 0;
-    TRAINING = 1;
-    trainingFile = [num2str(subjectID), '_', TASK, '_block0_training.mat'];
-    if isfile([DATA_PATH, '/', num2str(subjectID), '/', trainingFile])
-        percentTotalCorrect = 60;
-    else
-        percentTotalCorrect = 0;
-    end
-    
-    while percentTotalCorrect < 59
-        disp([TASK, ' Training TASK...']);
-        COND = nback_condition(1);
-        eval(TASK); % Run the task
-        BLOCK = BLOCK + 1;
-    end
-    
-    % Actual task
-    TRAINING = 0;
-    blockCount = 6;
-    start = 1;
-    for i = blockCount:-1:1
-        for condition = 1:3
-            if isfile([DATA_PATH, '/', num2str(subjectID), '/', [num2str(subjectID), '_', TASK, '_block', num2str(i), '_', num2str(condition), 'back_task.mat']])
-                start = i + 1;
-                break;
-            end
-        end
-        if start ~= 1
-            break;
-        end
-    end
+end
 
-    for BLOCK = start:blockCount
-        disp([TASK, ' STARTING...']);
-        COND = nback_condition(BLOCK);
-        eval(TASK); % Run the task
-    end
-    
-%% Execute NBACK - STERNBERG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-else
-    disp(['Subject ' num2str(subjectID) ': Running N-back followed by Sternberg...']);
-    
-     %% Execute N-back Task
-    % Training phase
-    TASK = 'AOC_NBack';
-    BLOCK = 0;
-    TRAINING = 1;
-    trainingFile = [num2str(subjectID), '_', TASK, '_block0_training.mat'];
-    if isfile([DATA_PATH, '/', num2str(subjectID), '/', trainingFile])
-        percentTotalCorrect = 60;
-    else
-        percentTotalCorrect = 0;
-    end
-    
-    while percentTotalCorrect < 59
-        disp([TASK, ' Training TASK...']);
-        COND = nback_condition(1);
-        eval(TASK); % Run the task
-        BLOCK = BLOCK + 1;
-    end
-     
-    % Actual task
-    TRAINING = 0;
-    blockCount = 6;
-    start = 1;
-    for i = blockCount:-1:1
-        for condition = 1:3
-            if isfile([DATA_PATH, '/', num2str(subjectID), '/', [num2str(subjectID), '_', TASK, '_block', num2str(i), '_', num2str(condition), 'back_task.mat']])
-                start = i + 1;
-                break;
-            end
-        end
-        if start ~= 1
-            break;
-        end
-    end
-    
-    for BLOCK = start:blockCount
-        disp([TASK, ' STARTING...']);
-        COND = nback_condition(BLOCK);
-        eval(TASK); % Run the task
-    end
-    
-    %% Mandatory Break of at least 5 seconds
-    disp('Waiting 5 seconds between tasks...');
-    WaitSecs(5);
-    
-    %% Execute Sternberg Task
-    % Training phase
-    TASK = 'AOC_Sternberg';
-    BLOCK = 0;
-    TRAINING = 1;
-    trainingFile = [num2str(subjectID), '_', TASK, '_block0_training.mat'];
-    if isfile([DATA_PATH, '/', num2str(subjectID), '/', trainingFile])
-        percentTotalCorrect = 60;
-    else
-        percentTotalCorrect = 0;
-    end
-    
-    while percentTotalCorrect < 59
-        disp([TASK, ' Training TASK...']);
-        eval(TASK); % Run the task
-        BLOCK = BLOCK + 1;
-    end
-    
-    % Actual task
-    TRAINING = 0;
-    blockCount = 6;
-    start = 1;
-    for i = blockCount:-1:1
-        if isfile([DATA_PATH, '/', num2str(subjectID), '/', [num2str(subjectID), '_', TASK, '_block', num2str(i), '_task.mat']])
-            start = i + 1;
-            break;
-        end
-    end
-    
-    for BLOCK = start:blockCount
-        disp([TASK, ' STARTING...']);
-        eval(TASK); % Run the task
-    end
+for BLOCK = start:blockCount
+    disp([TASK, ' STARTING...']);
+    eval(TASK); % Run the task
 end
 
 %% Allow keyboard input into Matlab code
