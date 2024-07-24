@@ -14,8 +14,8 @@ rootFilepath = pwd; % Retrieve the present working directory
 
 % Define paths
 PPDEV_PATH = '/home/methlab/Documents/MATLAB/ppdev-mex-master'; % For sending EEG triggers
-DATA_PATH = '/home/methlab/Desktop/AOC_data'; % Folder to save data
-FUNS_PATH = '/home/methlab/Desktop/AOC' ; % Folder with all functions
+DATA_PATH = '/home/methlab/Desktop/FCD_data'; % Folder to save data
+FUNS_PATH = '/home/methlab/Desktop/FCD' ; % Folder with all functions
 
 mkdir(DATA_PATH) % Make data dir, if doesn't exist yet
 addpath(FUNS_PATH) % Add path to folder with functions

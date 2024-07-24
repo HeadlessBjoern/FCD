@@ -414,21 +414,21 @@ for trl = 1:experiment.nTrials
     if data.retentionFixCross(trl) == 1 % Including FixCross
         Screen('DrawLines', ptbWindow, fixCoords, stimulus.fixationLineWidth, stimulus.fixationColor, fixPos, 2); % Draw fixation cross
         if TRAINING == 1
-        Eyelink('Message', num2str(FIX_RETENTION));
-        Eyelink('command', 'record_status_message "FIXATION"');
+            Eyelink('Message', num2str(FIX_RETENTION));
+            Eyelink('command', 'record_status_message "FIXATION"');
         else
-        Eyelink('Message', num2str(FIX_RETENTION));
-        Eyelink('command', 'record_status_message "FIXATION"');
-        sendtrigger(FIX_RETENTION,port,SITE,stayup);
+            Eyelink('Message', num2str(FIX_RETENTION));
+            Eyelink('command', 'record_status_message "FIXATION"');
+            sendtrigger(FIX_RETENTION,port,SITE,stayup);
         end
     elseif data.retentionFixCross(trl) == 0 % Blank
         if TRAINING == 1
-        Eyelink('Message', num2str(NOFIX_RETENTION));
-        Eyelink('command', 'record_status_message "FIXATION"');
+            Eyelink('Message', num2str(NOFIX_RETENTION));
+            Eyelink('command', 'record_status_message "FIXATION"');
         else
-        Eyelink('Message', num2str(NOFIX_RETENTION));
-        Eyelink('command', 'record_status_message "FIXATION"');
-        sendtrigger(NOFIX_RETENTION,port,SITE,stayup);
+            Eyelink('Message', num2str(NOFIX_RETENTION));
+            Eyelink('command', 'record_status_message "FIXATION"');
+            sendtrigger(NOFIX_RETENTION,port,SITE,stayup);
         end
     end
     Screen('DrawDots',ptbWindow, backPos, backDiameter, backColor,[],1);

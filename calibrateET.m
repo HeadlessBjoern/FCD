@@ -20,13 +20,13 @@ filePath = fullfile(DATA_PATH, subjectID);
 if strcmp(TASK, 'Resting')
     edfFile = [subjectID, '_Res.edf'];
 else
-    if TRAINING == 1 && strcmp(TASK, 'AOC_Sternberg')
+    if TRAINING == 1 && strcmp(TASK, 'FCD_Sternberg')
         edfFile = [subjectID,'_', 'STr.edf']; % training
-    elseif TRAINING == 1 && strcmp(TASK, 'AOC_NBack')
+    elseif TRAINING == 1 && strcmp(TASK, 'FCD_NBack')
         edfFile = [subjectID,'_', 'NTr.edf']; % training
-    elseif strcmp(TASK, 'AOC_Sternberg')
+    elseif strcmp(TASK, 'FCD_Sternberg')
         edfFile = [subjectID,'_', num2str(BLOCK), 'STk.edf']; % actual task (8 Blocks of Sternberg)
-    elseif strcmp(TASK, 'AOC_NBack')
+    elseif strcmp(TASK, 'FCD_NBack')
         edfFile = [subjectID,'_', num2str(BLOCK), 'NTk.edf']; % actual task (6 Blocks of NBack)
     end
 end
@@ -43,7 +43,7 @@ try
 
     EL_Calibrate
 
-    Eyelink('command', ['record_status_message "AOC' num2str(BLOCK) ' EEG"']);
+    Eyelink('command', ['record_status_message "FCD' num2str(BLOCK) ' EEG"']);
 catch
     %window=Screen('OpenWindow', whichScreen, par.BGcolor);
     disp('No Eyetracker');
