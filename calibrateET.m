@@ -44,6 +44,7 @@ try
     EL_Calibrate
 
     Eyelink('command', ['record_status_message "FCD' num2str(BLOCK) ' EEG"']);
+
 catch
     %window=Screen('OpenWindow', whichScreen, par.BGcolor);
     disp('No Eyetracker');
